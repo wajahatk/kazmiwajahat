@@ -7,6 +7,7 @@ from flask import Flask, g
 from flask_sqlalchemy import SQLAlchemy
 from models import Tweets, MentionsTweets, Users
 from requests import get
+from datetime import datetime, timedelta
 # ----------------------------------- Flask ---------------------------------- #
 app = Flask(__name__)
 
@@ -85,6 +86,7 @@ class Logic:
 
     def pick_status():
         status_options = [
+            "(┛ಠ_ಠ)┛彡┻━┻",
             "Check out my creator's portfolio here: https://jharriswebdev.herokuapp.com/ #freelance #webdeveloper #coding #100DaysOfCode",
             "My creator is kind of funny, too. Check him out: @jheeeeezy #bot",
             "@jheeeeezy is the one that created me! Check him out!",
