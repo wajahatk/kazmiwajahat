@@ -15,7 +15,8 @@ API_KEY=<Access token goes here>
 API_SECRET=<Access token secret goes here>
 SQLALCHEMY_DATABASE_URI=<sqlite:///twitter.db>
 SQLALCHEMY_TRACK_MODIFICATIONS=False
-```
+SENDER_EMAIL=<Your email goes here>
+REC_EMAIL=<Where you want to send emails about errors>
 -> Create the Github Repo where you plan on keeping the code for this bot.
 
 -> Connect Heroku to your Github Repo in the deployment section on Heroku's dashboard and setup auto builds.
