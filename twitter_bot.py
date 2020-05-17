@@ -50,6 +50,9 @@ class TwitterBot:
         p.stdin.flush()
         return
 
+    def remove_old_tweets_from_timeline():
+        Logic.delete_old_tweets()
+
     def post_status():
         print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
         print("Picking a status from the list...")
@@ -130,19 +133,21 @@ if __name__ == "__main__":
     sleep(30)
     while True:
         print("Twitter Bot Started!")
+        print('┬─┬ノ( º _ ºノ)')')
+        TwitterBot.remove_old_tweets_from_timeline()
         print('Updating User-Timeline DB... This may take a few mins...')
         print('(╯°□°)╯︵ ┻━┻')
         TwitterBot.refresh_db()
         TwitterBot.post_status()
-        print('┬─┬ノ( º _ ºノ)')
+        print('┬─┬ノ( ಠ ل͜ಠノ)')
         print("////-------Med Rest Period-------////")
         Logic.med_wait()
         TwitterBot.retweet_my_hashtags()
-        print('┳━┳ ヽ(ಠل͜ಠ)ﾉ')
+        print('(┛ಠ_ಠ)┛彡┻━┻')
         print("////-------Medium Rest Period-------////")
         Logic.med_wait()
         TwitterBot.follow_back()
-        print('(┛ಠ_ಠ)┛彡┻━┻')
+        print('┳━┳ ヽ(ಠل͜ಠ)ﾉ')
         print("////-------Medium Rest Period-------////")
         Logic.med_wait()
         TwitterBot.unfollow_nonfollowers()

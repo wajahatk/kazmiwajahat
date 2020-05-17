@@ -31,8 +31,6 @@ auth = tweepy.OAuthHandler(api_key, api_secret)
 auth.set_access_token(access_token, access_token_secret)
 # API Variable:
 api = tweepy.API(auth, wait_on_rate_limit=True)
-#.txt file to write last seen id:
-file_name = getenv("FILE_NAME")
 
 # ------------------------------------- - ------------------------------------ #
 class Logic:
@@ -58,6 +56,32 @@ class Logic:
         sleep_nums = [num for num in range(1800, 3600)]
         #Return a random sleep time:
         return sleep(choice(sleep_nums))
+
+    def delete_old_tweets():
+        days_to_keep = 5
+        cutoff_date = datetime.now() - timedelta(days=days_to_keep)
+        tweets_to_save = []
+        print("¨…¨…¨Retrieving timeline tweets¨…¨…¨")
+        timeline = tweepy.Cursor(api.user_timeline).items()
+        deletion_count = 0
+        ignored_count = 0
+        print(f"Cutoff date is: {cutoff_date}. The following tweets are being deleted:")
+        print("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=")
+        for t in timeline:
+            try:
+                if t.id not in tweets_to_save and t.created_at < cutoff_date:
+                    print(f"-> Deleted {t.id} created {t.created_at}")
+                    api.destroy_status(t.id)
+                    deletion_count += 1
+                else:
+                    ignored_count += 1
+            except tweepy.TweepError as error:
+                print("-> Couldn't update your status this time around.")
+                print(f"-> Error: {error.reason}")
+        print(f"¨…¨…¨Deleted {deletion_count} tweets from user-timeline¨…¨…¨")
+        print(f"¨…¨…¨Ignored {ignored_count} tweets¨…¨…¨")
+        print(f"≤≤≤ Done deleting tweets ≥≥≥")
+        print("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=")
 
     def pick_status():
         status_options = [
