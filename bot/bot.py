@@ -2,19 +2,12 @@ import tweepy
 from time import sleep
 from random import choice, shuffle
 from os import getenv, system
-import sqlite3
 from flask import Flask, g
 from flask_sqlalchemy import SQLAlchemy
-from models import Tweets, MentionsTweets, Users
-from requests import get
+from smtplib import SMTP, SMTPException
 from datetime import datetime, timedelta
-# ----------------------------------- Flask ---------------------------------- #
-app = Flask(__name__)
+from models import MentionsTweets
 
-# --------------------------------- DB Config -------------------------------- #
-app.config['SQLALCHEMY_DATABASE_URI'] = getenv('SQLALCHEMY_DATABASE_URI')
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = getenv('SQLALCHEMY_TRACK_MODIFICATIONS')
-db = SQLAlchemy(app)
 
 # ------------------------------------- - ------------------------------------ #
 # API key:
@@ -34,12 +27,8 @@ auth.set_access_token(access_token, access_token_secret)
 api = tweepy.API(auth, wait_on_rate_limit=True)
 
 # ------------------------------------- - ------------------------------------ #
-class Logic:
-    def __init__(self, name, username, password):
-        self.name = name
-        self.username = username
-        self.password = password
-
+class BotLogic:
+    # ----------------------------------- Waits ---------------------------------- #
     def short_wait(): #0.5 mins - 1 min
         #Set list of nums for random sleep time:
         sleep_nums = [num for num in range(30, 61)]
@@ -58,6 +47,7 @@ class Logic:
         #Return a random sleep time:
         return sleep(choice(sleep_nums))
 
+    # ------------------------------ User-type Logic ----------------------------- #
     def delete_old_tweets():
         days_to_keep = 5
         cutoff_date = datetime.now() - timedelta(days=days_to_keep)
@@ -77,12 +67,12 @@ class Logic:
                 else:
                     ignored_count += 1
             except tweepy.TweepError as error:
+                Mailer.send_error_email(error)
                 print("-> Couldn't update your status this time around.")
                 print(f"-> Error: {error.reason}")
         print(f"¨…¨…¨Deleted {deletion_count} tweets from user-timeline¨…¨…¨")
         print(f"¨…¨…¨Ignored {ignored_count} tweets¨…¨…¨")
         
-
     def pick_status():
         status_options = [
             "(┛ಠ_ಠ)┛彡┻━┻",
@@ -103,19 +93,20 @@ class Logic:
     def retweet_hashtags(hashtag_list):
         shuffle(hashtag_list)
         for hashtag in hashtag_list:
-            tweetNumber = 3
+            tweetNumber = 2
             tweets = tweepy.Cursor(api.search, hashtag).items(tweetNumber)
             for tweet in tweets:
                 try:
                     tweet.retweet()
                     print("-> Retweet Done!")
-                    Logic.short_wait()
+                    BotLogic.short_wait()
                 except tweepy.TweepError as error:
+                    Mailer.send_error_email(error)
                     print(error.reason)
                     pass
-                Logic.med_wait()
+                BotLogic.med_wait()
 
-    def retweet_favorite_follow(mention_list, following):
+    def retweet_favorite_follow(mention_list, people_i_follow):
         id_list = []
         #Get my screen name:
         me = api.me().screen_name
@@ -124,41 +115,52 @@ class Logic:
         #Loop thorugh mentions in db:
         for ment in mentions_in_db:
             id_list.append(ment.tweet)
-        #print(id_list)
         #Loop thorugh mention_list from args:
         for mention in reversed(mention_list):
-            #print(mention.id)
             if mention.user.screen_name != me and mention.id not in id_list:
-                #print(mention.id)
                 try:
                     #Reply to mention:
                     api.update_status("Thanks for then mention, @" + mention.user.screen_name + ". I'll forward this to my creator, @jheeeeezy for you! Follow me in the meantime!", mention.id)
-                    #print(f"This is a bot, @{mention.user.screen_name}. I'll forward this to my creator, @jheeeeezy for you! Follow me back!")
-                    #Favorite mention:
                     api.create_favorite(mention.id)
-                    #print(f"Favorited {mention.id}")
-                    #Retweet mention:
                     api.retweet(mention.id)
-                    #print(f"Retweeted {mention.id}")
-                    #Rest
-                    Logic.short_wait()
+                    BotLogic.short_wait()
                 except tweepy.TweepError as error:
+                    Mailer.send_error_email(error)
                     print(f"-> Error: {error.reason}")
                     pass
                 except AttributeError:
                     pass
-            if mention.user not in following:
+            if mention.user.id not in people_i_follow:
                 try:
                     api.create_friendship(mention.user.screen_name)
                     print(f"-> Just followed @{mention.user.screen_name}!")
-                    Logic.short_wait()
+                    BotLogic.short_wait()
                 except tweepy.TweepError as error:
+                    Mailer.send_error_email(error)
                     print(f"-> Error: {error.reason}")
                     pass
         #Update mentions in database:
         system('twitter-to-sqlite mentions-timeline twitter.db')
         print("Updated mentions db...")
-    
+
+    def refresh_usertimeline_db():
+        system('twitter-to-sqlite user-timeline twitter.db')
+        system('twitter-to-sqlite mentions-timeline twitter.db')
+
+    def find_trending_topics_in_usa():
+        trending_topic_list = []
+        trends_available = api.trends_available()
+        usa = api.trends_place(23424977)  #USA = 23424977
+        for trend_list in usa:
+            for (k,v) in trend_list.items():
+                for event in v:
+                    if isinstance(event, dict):
+                        for (a, b) in event.items():
+                            if a == 'name':
+                                trending_topic_list.append(b)
+        return trending_topic_list
+
+    # ------------------------------ Follower Logic ------------------------------ #
     def follow_back(followers, people_i_follow):
         for person in followers:
             if person not in people_i_follow:
@@ -172,7 +174,7 @@ class Logic:
             elif person in people_i_follow:
                 user = api.get_user(person)
                 print(f"-> You already follow @{user.screen_name}.")
-    
+
     def unfollow_nonfollowers(followers, people_i_follow):
         for person in people_i_follow:
             if person not in followers:
@@ -184,9 +186,6 @@ class Logic:
                 except tweepy.TweepError as error:
                     print(f"-> Error: {error.reason}")
                     pass
-
-    def refresh_usertimeline_db():
-        system('twitter-to-sqlite user-timeline twitter.db')
 
     def get_people_i_follow():
         following = api.friends()
@@ -203,4 +202,29 @@ class Logic:
             sleep(10)
         return follower_id_list
         
-   
+    def find_users_to_follow_based_on_trend_list(trend_list):
+        tweet_number = 1
+        trends = trend_list
+        for trend in trends:
+            tweets = tweepy.Cursor(api.search, trend).items(tweet_number)
+            for tweet in tweets:
+                try:
+                    api.create_friendship(tweet.user.id)
+                    print(f'-> Followed @{tweet.user.screen_name}!')
+                    BotLogic.med_wait()
+                except tweepy.TweepError as error:
+                    print(f"-> ERROR: {error.reason}")
+                    pass
+            BotLogic.short_wait()
+
+    # ------------------------------- Mailer Logic ------------------------------- #
+    def send_error_email(error_to_send):
+        sender = getenv('SENDER_EMAIL')
+        receiver = getenv('REC_EMAIL')
+        message = f"There was an error with josh_bot_9000... {error_to_send}"
+        try:
+            smtpObj = SMTP('0.0.0.0')
+            smtpObj.sendmail(sender, receiver, message)
+            print("Successfully sent email")
+        except SMTPException:
+            print("Error: unable to send email")
