@@ -2,6 +2,7 @@
 An automated Twitter bot, created with Python 3 and Tweepy. Hosted on Heroku, running 24/7. Auto reply, like and favorite when mentioned. Auto-retweet specified hashtags. Posts status updates. Follows the users that follow the bot. Unfollows those not found in followers list. Messages coming soon 
 
 To host your own on Heroku:
+
 -> Edit the hashtags, statuses, and anything else you want to customize.
 
 -> Get your Keys and Tokens from https://developer.twitter.com/apps
