@@ -96,8 +96,6 @@ class TwitterBot:
             '#gamingnews',
             '#newmusic',
             '#ustreetdc',
-            '#redskins',
-            '#orioles',
         ]
         print("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=")
         print("Now, I'm searching for hashtag posts to retweet...")
