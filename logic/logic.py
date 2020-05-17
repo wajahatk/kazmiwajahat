@@ -70,7 +70,7 @@ class Logic:
             "Share a meme with me!",
             "@jheeeeezy .... --- .--     -- .- -. -.--     .--. . --- .--. .-.. .     .- .-. .     --. --- .. -. --.     - ---     - .-. .- -. ... .-.. .- - .     - .... .. ...     .--- ..- ... -     - ---     ..-. .. -. -..     .. - ...     .--- ..- ... -     - .... .. ...     --.- ..- . ... - .. --- -. ··--··",
             "これは英語ではありません！",
-            "@jheeeeezy can create a bot for you, too! #bot #freelance #hitmeup# #work",
+            "@jheeeeezy can create a bot for you, too! #bot #freelance #hitmeup #work",
             "https://jharriswebdev.herokuapp.com/ #freelance #webdev",
         ]
         return choice(status_options)
