@@ -125,8 +125,7 @@ class TwitterBot:
 
 # ---------------------------------- Run Bot --------------------------------- #
 if __name__ == "__main__":
-    TwitterBot.unfollow_nonfollowers()
-    """ print('|-|-|Configuring twitter-to-sqlite...|-|-|')
+    print('|-|-|Configuring twitter-to-sqlite...|-|-|')
     TwitterBot.create_auth_json()
     sleep(30)
     while True:
@@ -159,5 +158,5 @@ if __name__ == "__main__":
         print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
         print('(˚Õ˚)ر ~~~~╚╩╩╝')
         print("////-------Long Rest Period-------////")
-        Logic.long_wait() """
+        Logic.long_wait()
         
