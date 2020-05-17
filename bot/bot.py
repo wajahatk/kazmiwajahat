@@ -66,7 +66,7 @@ class BotLogic:
                 else:
                     ignored_count += 1
             except tweepy.TweepError as error:
-                Mailer.send_error_email(error)
+                BotLogic.send_error_email(error)
                 print("-> Couldn't update your status this time around.")
                 print(f"-> Error: {error.reason}")
         print(f"¨…¨…¨Deleted {deletion_count} tweets from user-timeline¨…¨…¨")
@@ -100,7 +100,7 @@ class BotLogic:
                     print("-> Retweet Done!")
                     BotLogic.short_wait()
                 except tweepy.TweepError as error:
-                    Mailer.send_error_email(error)
+                    BotLogic.send_error_email(error)
                     print(error.reason)
                     pass
                 BotLogic.med_wait()
@@ -124,7 +124,7 @@ class BotLogic:
                     api.retweet(mention.id)
                     BotLogic.short_wait()
                 except tweepy.TweepError as error:
-                    Mailer.send_error_email(error)
+                    BotLogic.send_error_email(error)
                     print(f"-> Error: {error.reason}")
                     pass
                 except AttributeError:
@@ -135,7 +135,7 @@ class BotLogic:
                     print(f"-> Just followed @{mention.user.screen_name}!")
                     BotLogic.short_wait()
                 except tweepy.TweepError as error:
-                    Mailer.send_error_email(error)
+                    BotLogic.send_error_email(error)
                     print(f"-> Error: {error.reason}")
                     pass
         #Update mentions in database:
