@@ -1,29 +1,32 @@
 import tweepy
 from time import sleep
 from logic.logic import Logic
-import os
+from os import getenv, environ
 import sqlite3
 from flask import Flask, g, jsonify, make_response
 from flask_sqlalchemy import SQLAlchemy
 import json
 from models import Tweets
+from subprocess import Popen, PIPE
 # ----------------------------------- Flask ---------------------------------- #
 app = Flask(__name__)
+
 # --------------------------------- DB Config -------------------------------- #
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI')
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = os.getenv('SQLALCHEMY_TRACK_MODIFICATIONS')
+app.config['SQLALCHEMY_DATABASE_URI'] = getenv('SQLALCHEMY_DATABASE_URI')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = getenv('SQLALCHEMY_TRACK_MODIFICATIONS')
 db = SQLAlchemy(app)
-host = os.getenv('HOST')
-port = os.environ.get('PORT')
+host = getenv('HOST')
+port = environ.get('PORT')
+
 # -------------------------------- Twitter API ------------------------------- #
 # API key:
-api_key = os.getenv("API_KEY")
+api_key = getenv("CONSUMER_KEY")
 # API secret key:
-api_secret = os.getenv("API_SECRET")
+api_secret = getenv("CONSUMER_SECRET")
 # Access token: 
-access_token = os.getenv("ACCESS_TOKEN")
+access_token = getenv("API_KEY")
 # Access token secret: 
-access_token_secret = os.getenv("ACCESS_TOKEN_SECRET")
+access_token_secret = getenv("API_SECRET")
 
 # ---------------------------------- Tweepy ---------------------------------- #
 # Tweepy 0Auth 1a authentication:
@@ -31,14 +34,22 @@ auth = tweepy.OAuthHandler(api_key, api_secret)
 auth.set_access_token(access_token, access_token_secret)
 # API Variable:
 api = tweepy.API(auth, wait_on_rate_limit=True)
-#.txt file to write last seen id:
-file_name = os.getenv("FILE_NAME")
 
 # ---------------------------------------------------------------------------- #
 class TwitterBot:
     def __init__(self, username, password):
         self.username = username
         self.password = password
+
+    def create_auth_json():
+        #Create auth.json file for twitter-to-sqlite
+        p = Popen(['twitter-to-sqlite', 'auth'], stdin=PIPE)
+        p.stdin.write(f"{api_key}\n".encode())
+        p.stdin.write(f"{api_secret}\n".encode())
+        p.stdin.write(f"{access_token}\n".encode())
+        p.stdin.write(f"{access_token_secret}\n".encode())
+        p.stdin.flush()
+        return
 
     def post_status():
         print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
@@ -115,6 +126,9 @@ class TwitterBot:
 
 # ---------------------------------- Run Bot --------------------------------- #
 if __name__ == "__main__":
+    print('Config twitter-to-sqlite...')
+    TwitterBot.create_auth_json()
+    sleep(30)
     while True:
         print("Twitter Bot Started!")
         print('Updating User-Timeline DB... This may take a few mins...')
@@ -146,4 +160,3 @@ if __name__ == "__main__":
         print('(˚Õ˚)ر ~~~~╚╩╩╝')
         print("////-------Long Rest Period-------////")
         Logic.long_wait()
-    

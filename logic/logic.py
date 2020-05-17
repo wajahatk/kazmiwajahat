@@ -1,26 +1,29 @@
 import tweepy
 from time import sleep
 from random import choice, shuffle
-import os
+from os import getenv, system
 import sqlite3
 from flask import Flask, g
 from flask_sqlalchemy import SQLAlchemy
 from models import Tweets, MentionsTweets, Users
+
 # ----------------------------------- Flask ---------------------------------- #
 app = Flask(__name__)
+
 # --------------------------------- DB Config -------------------------------- #
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI')
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = os.getenv('SQLALCHEMY_TRACK_MODIFICATIONS')
+app.config['SQLALCHEMY_DATABASE_URI'] = getenv('SQLALCHEMY_DATABASE_URI')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = getenv('SQLALCHEMY_TRACK_MODIFICATIONS')
 db = SQLAlchemy(app)
+
 # ------------------------------------- - ------------------------------------ #
 # API key:
-api_key = os.getenv("API_KEY")
+api_key = getenv("CONSUMER_KEY")
 # API secret key:
-api_secret = os.getenv("API_SECRET")
+api_secret = getenv("CONSUMER_SECRET")
 # Access token: 
-access_token = os.getenv("ACCESS_TOKEN")
+access_token = getenv("API_KEY")
 # Access token secret: 
-access_token_secret = os.getenv("ACCESS_TOKEN_SECRET")
+access_token_secret = getenv("API_SECRET")
 
 # ---------------------------------- Tweepy ---------------------------------- #
 # Tweepy 0Auth 1a authentication:
@@ -29,7 +32,8 @@ auth.set_access_token(access_token, access_token_secret)
 # API Variable:
 api = tweepy.API(auth, wait_on_rate_limit=True)
 #.txt file to write last seen id:
-file_name = os.getenv("FILE_NAME")
+file_name = getenv("FILE_NAME")
+
 # ------------------------------------- - ------------------------------------ #
 class Logic:
     def __init__(self, name, username, password):
@@ -55,18 +59,6 @@ class Logic:
         #Return a random sleep time:
         return sleep(choice(sleep_nums))
 
-    def read_last_seen(FILE_NAME):
-        file_read = open(FILE_NAME, 'r')
-        last_seen_id = int(file_read.read().strip())
-        file_read.close()
-        return last_seen_id
-
-    def store_last_seen(FILE_NAME, last_seen_id):
-        file_write = open(FILE_NAME, 'w')
-        file_write.write(str(last_seen_id))
-        file_write.close()
-        return
-    
     def pick_status():
         status_options = [
             "Check out my creator's portfolio here: https://jharriswebdev.herokuapp.com/ #freelance #webdeveloper #coding #100DaysOfCode",
@@ -139,7 +131,7 @@ class Logic:
                     print(f"-> Error: {error.reason}")
                     pass
         #Update mentions in database:
-        os.system('twitter-to-sqlite mentions-timeline twitter.db')
+        system('twitter-to-sqlite mentions-timeline twitter.db')
         print("Updated mentions db...")
     
     def follow_back(followers, following):
@@ -165,7 +157,7 @@ class Logic:
                     pass
 
     def refresh_usertimeline_db():
-        os.system('twitter-to-sqlite user-timeline twitter.db')
+        system('twitter-to-sqlite user-timeline twitter.db')
 
     def get_people_i_follow():
         following = api.friends()
