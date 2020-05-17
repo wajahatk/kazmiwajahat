@@ -8,7 +8,6 @@ from smtplib import SMTP, SMTPException
 from datetime import datetime, timedelta
 from models import MentionsTweets
 
-
 # ------------------------------------- - ------------------------------------ #
 # API key:
 api_key = getenv("CONSUMER_KEY")
@@ -71,7 +70,7 @@ class BotLogic:
                 print("-> Couldn't update your status this time around.")
                 print(f"-> Error: {error.reason}")
         print(f"¨…¨…¨Deleted {deletion_count} tweets from user-timeline¨…¨…¨")
-        print(f"¨…¨…¨Ignored {ignored_count} tweets¨…¨…¨")
+        print(f"         ¨…¨…¨Ignored {ignored_count} tweets¨…¨…¨")
         
     def pick_status():
         status_options = [
