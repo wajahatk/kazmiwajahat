@@ -51,12 +51,14 @@ class TwitterBot:
         return
 
     def remove_old_tweets_from_timeline():
+        print("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=")
+        print("Picking a status from the list...")
         Logic.delete_old_tweets()
+        print(f"≤≤≤ Done deleting tweets ≥≥≥")
+        print("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=")
 
     def post_status():
-        print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-        print("Picking a status from the list...")
-        print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+        print("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=")
         try:
             status = Logic.pick_status()
             api.update_status(status)
@@ -66,6 +68,8 @@ class TwitterBot:
             print(f"-> Error: {error.reason}")
             pass
         print("**Done with Status...**")
+        print("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=")
+        
 
     def retweet_my_hashtags():
         hashtags = [
@@ -86,44 +90,47 @@ class TwitterBot:
             '#WashingtonDC',
             '#dcrestaurant'
         ]
-        print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+        print("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=")
         print("Now, I'm searching for hashtag posts to retweet...")
-        print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
         Logic.retweet_hashtags(hashtags)
         print("**Done Retweeting...**")
+        print("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=")
 
     def reply_to_mentions_and_follow():
-        print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+        print("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=")
         print("Replying to user's that have mentioned me and following them!")
-        print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
         # Set all tweets that mention my user to list:
         mentions = api.mentions_timeline(tweet_mode='extended')
         following = Logic.get_people_i_follow()
         Logic.retweet_favorite_follow(mentions, following)
         print("**Done with mentions...**")
+        print("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=")
 
     def follow_back():
-        print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+        print("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=")
         print("Giving my followers the ol' follow back...")
-        print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
         me = api.me().screen_name
         followers = Logic.get_my_followers()
         following = Logic.get_people_i_follow()
         Logic.follow_back(followers, following)
         print("**Done with 'Follow Back'**")
+        print("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=")
         
     def unfollow_nonfollowers():
-        print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-        print("Unfollowing those that have unfollowed me...")
-        print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+        print("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=")
+        print("Unfollowing those that don't me...")
         me = api.me().screen_name
         followers = Logic.get_my_followers()
         following = Logic.get_people_i_follow()
         Logic.unfollow_nonfollowers(followers, following)
         print("**Done unfollowing...**")
+        print("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=")
     
     def refresh_db():
+        print("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=")
+        print('Updating User-Timeline DB... This may take a few mins...')
         Logic.refresh_usertimeline_db()
+        print("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=")
 
 
 # ---------------------------------- Run Bot --------------------------------- #
@@ -135,7 +142,7 @@ if __name__ == "__main__":
         print("Twitter Bot Started!")
         print('┬─┬ノ( º _ ºノ)')
         TwitterBot.remove_old_tweets_from_timeline()
-        print('Updating User-Timeline DB... This may take a few mins...')
+        
         print('(╯°□°)╯︵ ┻━┻')
         TwitterBot.refresh_db()
         TwitterBot.post_status()
@@ -158,9 +165,9 @@ if __name__ == "__main__":
         print('┻━┻︵ \(°□°)/ ︵ ┻━┻')
         print("////-------Medium Rest Period-------////")
         Logic.med_wait()
-        print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+        print("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=")
         print("Getting ready to start again!")
-        print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+        print("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=")
         print('(˚Õ˚)ر ~~~~╚╩╩╝')
         print("////-------Long Rest Period-------////")
         Logic.long_wait()

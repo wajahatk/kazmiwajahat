@@ -67,7 +67,7 @@ class Logic:
         deletion_count = 0
         ignored_count = 0
         print(f"Cutoff date is: {cutoff_date}. The following tweets are being deleted:")
-        print("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=")
+        print('xx--------------------------xx')
         for t in timeline:
             try:
                 if t.id not in tweets_to_save and t.created_at < cutoff_date:
@@ -81,8 +81,7 @@ class Logic:
                 print(f"-> Error: {error.reason}")
         print(f"¨…¨…¨Deleted {deletion_count} tweets from user-timeline¨…¨…¨")
         print(f"¨…¨…¨Ignored {ignored_count} tweets¨…¨…¨")
-        print(f"≤≤≤ Done deleting tweets ≥≥≥")
-        print("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=")
+        
 
     def pick_status():
         status_options = [
