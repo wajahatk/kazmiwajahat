@@ -6,7 +6,7 @@ import sqlite3
 from flask import Flask, g
 from flask_sqlalchemy import SQLAlchemy
 from models import Tweets, MentionsTweets, Users
-
+from requests import get
 # ----------------------------------- Flask ---------------------------------- #
 app = Flask(__name__)
 
@@ -134,24 +134,30 @@ class Logic:
         system('twitter-to-sqlite mentions-timeline twitter.db')
         print("Updated mentions db...")
     
-    def follow_back(followers, following):
-        for follower in following:
-            if follower not in following:
+    
+    def follow_back(followers, people_i_follow):
+        for person in followers:
+            if person not in people_i_follow:
                 try:
-                    api.create_friendship(follower)
-                    user = api.get_user(follower)
-                    print(f"-> Just followed @{user}!")
+                    api.create_friendship(person)
+                    user = api.get_user(person)
+                    print(f"-> Just followed @{user.screen_name}!")
                 except tweepy.TweepError as error:
                     print(f"-> Error: {error.reason}")
                     pass
+            elif person in people_i_follow:
+                user = api.get_user(person)
+                print(f"-> You already follow @{user.screen_name}.")
+
     
-    def unfollow_nonfollowers(followers, following):
-        for person in following:
+    def unfollow_nonfollowers(followers, people_i_follow):
+        for person in people_i_follow:
             if person not in followers:
                 try:
-                    print(f"-> {person.screen_name} not in followers")
-                    api.destroy_friendship(person.id)
-                    print(f"-> Unfollowed @{person.screen_name}...")
+                    user = api.get_user(person)
+                    print(f"-> {user.screen_name} not in followers")
+                    api.destroy_friendship(person)
+                    print(f"-> Unfollowed @{user.screen_name}...")
                 except tweepy.TweepError as error:
                     print(f"-> Error: {error.reason}")
                     pass
@@ -162,8 +168,8 @@ class Logic:
     def get_people_i_follow():
         following = api.friends()
         following_id_list = []
-        for f in following:
-            following_id_list.append(f.id)
+        for page in tweepy.Cursor(api.friends_ids).pages():
+            following_id_list.extend(page)
         return following_id_list 
 
     def get_my_followers():

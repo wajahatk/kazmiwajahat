@@ -38,8 +38,7 @@ api = tweepy.API(auth, wait_on_rate_limit=True)
 # ---------------------------------------------------------------------------- #
 class TwitterBot:
     def __init__(self, username, password):
-        self.username = username
-        self.password = password
+        self.username = userna
 
     def create_auth_json():
         #Create auth.json file for twitter-to-sqlite
@@ -126,7 +125,8 @@ class TwitterBot:
 
 # ---------------------------------- Run Bot --------------------------------- #
 if __name__ == "__main__":
-    print('Config twitter-to-sqlite...')
+    TwitterBot.unfollow_nonfollowers()
+    """ print('|-|-|Configuring twitter-to-sqlite...|-|-|')
     TwitterBot.create_auth_json()
     sleep(30)
     while True:
@@ -159,4 +159,5 @@ if __name__ == "__main__":
         print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
         print('(˚Õ˚)ر ~~~~╚╩╩╝')
         print("////-------Long Rest Period-------////")
-        Logic.long_wait()
+        Logic.long_wait() """
+        

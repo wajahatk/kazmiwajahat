@@ -19,3 +19,5 @@ SQLALCHEMY_TRACK_MODIFICATIONS=False
 -> Connect Heroku to Github in the deployment section and setup auto builds.
 
 -> Watch the logs to see your bots progress and watch it flip tables!
+
+In order to keep the bot running and avoid the free dynos provided from heroku from idling, register you app at http://kaffeine.herokuapp.com/
