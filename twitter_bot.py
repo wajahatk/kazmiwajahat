@@ -37,8 +37,8 @@ api = tweepy.API(auth, wait_on_rate_limit=True)
 
 # ---------------------------------------------------------------------------- #
 class TwitterBot:
-    def __init__(self, username, password):
-        self.username = userna
+    def __init__(self):
+        pass
 
     def create_auth_json():
         #Create auth.json file for twitter-to-sqlite

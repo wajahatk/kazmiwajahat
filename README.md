@@ -20,4 +20,4 @@ SQLALCHEMY_TRACK_MODIFICATIONS=False
 
 -> Watch the logs to see your bots progress and watch it flip tables!
 
-In order to keep the bot running and avoid the free dynos provided from heroku from idling, register you app at http://kaffeine.herokuapp.com/
+In order to keep the bot running and avoid the free dynos provided by heroku from idling, register you app at http://kaffeine.herokuapp.com/
