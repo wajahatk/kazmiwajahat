@@ -133,7 +133,7 @@ if __name__ == "__main__":
     sleep(30)
     while True:
         print("Twitter Bot Started!")
-        print('┬─┬ノ( º _ ºノ)')')
+        print('┬─┬ノ( º _ ºノ)')
         TwitterBot.remove_old_tweets_from_timeline()
         print('Updating User-Timeline DB... This may take a few mins...')
         print('(╯°□°)╯︵ ┻━┻')
