@@ -134,7 +134,6 @@ class Logic:
         system('twitter-to-sqlite mentions-timeline twitter.db')
         print("Updated mentions db...")
     
-    
     def follow_back(followers, people_i_follow):
         for person in followers:
             if person not in people_i_follow:
@@ -148,7 +147,6 @@ class Logic:
             elif person in people_i_follow:
                 user = api.get_user(person)
                 print(f"-> You already follow @{user.screen_name}.")
-
     
     def unfollow_nonfollowers(followers, people_i_follow):
         for person in people_i_follow:
