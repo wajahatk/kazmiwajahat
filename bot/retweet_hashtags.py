@@ -26,7 +26,7 @@ api = API(auth, wait_on_rate_limit=True)
 def retweet_hashtags(hashtag_list):
     shuffle(hashtag_list)
     for hashtag in hashtag_list:
-        tweetNumber = 2
+        tweetNumber = 1
         try:
             tweets = Cursor(api.search, hashtag).items(tweetNumber)
             for tweet in tweets:
