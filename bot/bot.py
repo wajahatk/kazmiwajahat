@@ -138,6 +138,7 @@ class BotLogic:
                     #BotLogic.send_error_email(error)
                     print(f"-> Error: {error.reason}")
                     pass
+            BotLogic.short_wait()
         #Update mentions in database:
         system('twitter-to-sqlite mentions-timeline twitter.db')
         print("Updated mentions db...")
@@ -167,6 +168,7 @@ class BotLogic:
                     api.create_friendship(person)
                     user = api.get_user(person)
                     print(f"-> Just followed @{user.screen_name}!")
+                    BotLogic.med_wait()
                 except tweepy.TweepError as error:
                     print(f"-> Error: {error.reason}")
                     pass
