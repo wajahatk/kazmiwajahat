@@ -1,5 +1,5 @@
 from os import getenv
-from .send_error_email import send_error_email
+from .mailer import send_error_email
 from tweepy import Cursor, TweepError, API, OAuthHandler
 
 

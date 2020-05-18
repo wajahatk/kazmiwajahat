@@ -1,6 +1,6 @@
 from time import sleep
 from os import getenv, system
-from 
+from bot.mailer import send_error_email
 from subprocess import Popen, PIPE
 from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, g, make_response
@@ -10,7 +10,6 @@ from bot import (
     models,
     pick_status,
     follow_back,
-    send_error_email,
     retweet_hashtags,
     get_my_followers,
     create_auth_json,

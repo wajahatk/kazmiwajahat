@@ -1,6 +1,6 @@
 from os import getenv
 from time import sleep
-from .send_error_email import send_error_email
+from .mailer import send_error_email
 from tweepy import Cursor, TweepError, API, OAuthHandler
 
 

@@ -1,6 +1,6 @@
 from os import getenv, system
 from .waits import short_wait, med_wait
-from .send_error_email import send_error_email
+from .mailer import send_error_email
 from tweepy import Cursor, TweepError, OAuthHandler, API
 
 
