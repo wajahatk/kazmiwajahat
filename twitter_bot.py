@@ -4,7 +4,6 @@ from bot.bot import BotLogic
 from os import getenv, environ
 from flask import Flask, g, make_response
 from flask_sqlalchemy import SQLAlchemy
-from models import Tweets
 from subprocess import Popen, PIPE
 # ----------------------------------- Flask ---------------------------------- #
 app = Flask(__name__)
@@ -49,7 +48,7 @@ class TwitterBot:
         print("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=")
         print("Picking a status from the list...")
         BotLogic.delete_old_tweets()
-        print(f"≤≤≤ Done deleting tweets ≥≥≥")
+        print(f"** Done deleting tweets... **")
         print("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=")
 
     def post_status():
@@ -60,10 +59,10 @@ class TwitterBot:
             print("-> Status posted!!!")
         except tweepy.TweepError as error:
             print("-> Couldn't update your status this time around.")
-            BotLogic.send_error_email(error)
             print(f"-> Error: {error.reason}")
+            BotLogic.send_error_email(error)
             pass
-        print("**Done with Status...**")
+        print("** Done with Status... **")
         print("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=")
     
     def retweet_my_hashtags():
@@ -102,7 +101,7 @@ class TwitterBot:
         print("Now, I'm searching for hashtag posts to retweet...")
         BotLogic.retweet_hashtags(hashtags)
         BotLogic.find_users_to_follow_based_on_trend_list(hashtags)
-        print("**Done Retweeting...**")
+        print("** Done Retweeting... **")
         print("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=")
 
     def reply_to_mentions_and_follow():
@@ -112,7 +111,7 @@ class TwitterBot:
         mentions = api.mentions_timeline(tweet_mode='extended')
         following = BotLogic.get_people_i_follow()
         BotLogic.retweet_favorite_follow(mentions, following)
-        print("**Done with mentions...**")
+        print("** Done with mentions... **")
         print("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=")
 
     def follow_back():
@@ -122,7 +121,7 @@ class TwitterBot:
         followers = BotLogic.get_my_followers()
         following = BotLogic.get_people_i_follow()
         BotLogic.follow_back(followers, following)
-        print("**Done with 'Follow Back'**")
+        print("** Done with 'Follow Back' **")
         print("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=")
         
     def unfollow_nonfollowers():
@@ -132,7 +131,7 @@ class TwitterBot:
         followers = BotLogic.get_my_followers()
         following = BotLogic.get_people_i_follow()
         BotLogic.unfollow_nonfollowers(followers, following)
-        print("**Done unfollowing...**")
+        print("** Done unfollowing... **")
         print("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=")
 
     def retweet_trending_topics():
@@ -140,7 +139,7 @@ class TwitterBot:
         print("Now, I'm searching for trending topics in the USA for posts to retweet...")
         usa_trends = BotLogic.find_trending_topics_in_usa()
         BotLogic.retweet_hashtags(usa_trends)
-        print("**Done Retweeting...**")
+        print("** Done Retweeting... **")
         print("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=")
 
     def follow_trendy_users():
@@ -160,7 +159,6 @@ class TwitterBot:
 
 # ---------------------------------- Run Bot --------------------------------- #
 if __name__ == "__main__":
-    
     print('|-|-|Configuring twitter-to-sqlite...|-|-|')
     TwitterBot.create_auth_json()
     sleep(10)

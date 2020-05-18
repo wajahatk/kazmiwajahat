@@ -75,7 +75,7 @@ class BotLogic:
         
     def pick_status():
         status_options = [
-            "If you were a triangle youd be acute one.",
+            "If you were a triangle you'd be acute one.",
             "eBay is so useless. I tried to look up lighters and all they had was 13,749 matches.",
             "(┛ಠ_ಠ)┛彡┻━┻",
             "Check out my creator's portfolio here: https://jharriswebdev.herokuapp.com/ #freelance #webdeveloper #coding #100DaysOfCode",
@@ -154,7 +154,13 @@ class BotLogic:
 
     def find_trending_topics_in_usa():
         trending_topic_list = []
-        trends_available = api.trends_available()
+        #Use this when trying to find trends worldwide
+        #try:
+            #trends_available = api.trends_available()
+        #except tweepy.TweepError as error:
+            #print(f"-> Error: {error.reason}")
+            #BotLogic.send_error_email(error)
+            #pass
         try:
             usa = api.trends_place(23424977)  #USA = 23424977
             for trend_list in usa:
@@ -184,8 +190,13 @@ class BotLogic:
                     BotLogic.send_error_email(error)
                     pass
             elif person in people_i_follow:
-                user = api.get_user(person)
-                print(f"-> You already follow @{user.screen_name}.")
+                try:
+                    user = api.get_user(person)
+                    print(f"-> You already follow @{user.screen_name}.")
+                except tweepy.TweepError as error:
+                    print(f"-> Error: {error.reason}")
+                    BotLogic.send_error_email(error)
+                    pass
 
     def unfollow_nonfollowers(followers, people_i_follow):
         for person in people_i_follow:
@@ -264,7 +275,7 @@ class BotLogic:
         receiver = getenv('REC_EMAIL')
         pw = getenv('SENDER_PW')
         msg = f"""\
-        Subject: JoshBot9000 Error
+        Subject: <JoshBot9000 Error>
 
         Error: {error_to_send}
         """
@@ -279,3 +290,4 @@ class BotLogic:
             print("Error: unable to send email")
         finally:
             server.quit()
+
