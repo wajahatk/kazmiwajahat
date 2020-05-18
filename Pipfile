@@ -16,6 +16,7 @@ db-sqlite3 = "*"
 twitter-to-sqlite = "*"
 flask-migrate = "*"
 gunicorn = "*"
+smtplib = "*"
 
 [requires]
 python_version = "3.7"

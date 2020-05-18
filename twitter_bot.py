@@ -60,6 +60,7 @@ class TwitterBot:
             print("-> Status posted!!!")
         except tweepy.TweepError as error:
             print("-> Couldn't update your status this time around.")
+            BotLogic.send_error_email(error)
             print(f"-> Error: {error.reason}")
             pass
         print("**Done with Status...**")

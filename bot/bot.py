@@ -4,7 +4,8 @@ from random import choice, shuffle
 from os import getenv, system
 from flask import Flask, g
 from flask_sqlalchemy import SQLAlchemy
-#from smtplib import SMTP, SMTPException
+from smtplib import SMTP, SMTPException
+from ssl import create_default_context
 from datetime import datetime, timedelta
 from models import MentionsTweets
 
@@ -34,15 +35,15 @@ class BotLogic:
         #Return a random sleep time:
         return sleep(choice(sleep_nums))
 
-    def med_wait(): #5 mins - 10 mins
+    def med_wait(): #1 mins - 10 mins
         #Set list of nums for random sleep time:
-        sleep_nums = [num for num in range(300, 601)]
+        sleep_nums = [num for num in range(60, 601)]
         #Return a random sleep time:
         return sleep(choice(sleep_nums))
 
-    def long_wait(): #30 min - 60 mins
+    def long_wait(): #10 min - 60 mins
         #Set list of nums for random sleep time:
-        sleep_nums = [num for num in range(1800, 3600)]
+        sleep_nums = [num for num in range(600, 3600)]
         #Return a random sleep time:
         return sleep(choice(sleep_nums))
 
@@ -66,7 +67,7 @@ class BotLogic:
                 else:
                     ignored_count += 1
             except tweepy.TweepError as error:
-                #BotLogic.send_error_email(error)
+                BotLogic.send_error_email(error)
                 print("-> Couldn't update your status this time around.")
                 print(f"-> Error: {error.reason}")
         print(f"¨…¨…¨Deleted {deletion_count} tweets from user-timeline¨…¨…¨")
@@ -74,6 +75,8 @@ class BotLogic:
         
     def pick_status():
         status_options = [
+            "If you were a triangle youd be acute one.",
+            "eBay is so useless. I tried to look up lighters and all they had was 13,749 matches.",
             "(┛ಠ_ಠ)┛彡┻━┻",
             "Check out my creator's portfolio here: https://jharriswebdev.herokuapp.com/ #freelance #webdeveloper #coding #100DaysOfCode",
             "My creator is kind of funny, too. Check him out: @jheeeeezy #bot",
@@ -100,7 +103,7 @@ class BotLogic:
                     print("-> Retweet Done!")
                     BotLogic.short_wait()
                 except tweepy.TweepError as error:
-                    #BotLogic.send_error_email(error)
+                    BotLogic.send_error_email(error)
                     print(error.reason)
                     pass
                 BotLogic.med_wait()
@@ -124,10 +127,11 @@ class BotLogic:
                     api.retweet(mention.id)
                     BotLogic.short_wait()
                 except tweepy.TweepError as error:
-                    #BotLogic.send_error_email(error)
+                    BotLogic.send_error_email(error)
                     print(f"-> Error: {error.reason}")
                     pass
-                except AttributeError:
+                except AttributeError as att_error:
+                    BotLogic.send_error_email(att_error)
                     pass
             if mention.user.id not in people_i_follow:
                 try:
@@ -135,7 +139,7 @@ class BotLogic:
                     print(f"-> Just followed @{mention.user.screen_name}!")
                     BotLogic.short_wait()
                 except tweepy.TweepError as error:
-                    #BotLogic.send_error_email(error)
+                    BotLogic.send_error_email(error)
                     print(f"-> Error: {error.reason}")
                     pass
             BotLogic.short_wait()
@@ -170,6 +174,7 @@ class BotLogic:
                     print(f"-> Just followed @{user.screen_name}!")
                     BotLogic.med_wait()
                 except tweepy.TweepError as error:
+                    BotLogic.send_error_email(error)
                     print(f"-> Error: {error.reason}")
                     pass
             elif person in people_i_follow:
@@ -185,6 +190,7 @@ class BotLogic:
                     api.destroy_friendship(person)
                     print(f"-> Unfollowed @{user.screen_name}...")
                 except tweepy.TweepError as error:
+                    BotLogic.send_error_email(error)
                     print(f"-> Error: {error.reason}")
                     pass
 
@@ -214,18 +220,31 @@ class BotLogic:
                     print(f'-> Followed @{tweet.user.screen_name}!')
                     BotLogic.med_wait()
                 except tweepy.TweepError as error:
+                    BotLogic.send_error_email(error)
                     print(f"-> ERROR: {error.reason}")
                     pass
             BotLogic.short_wait()
 
     # ------------------------------- Mailer Logic ------------------------------- #
     def send_error_email(error_to_send):
+        smtp_server = "smtp.gmail.com"
+        port = 587 # For starttls
         sender = getenv('SENDER_EMAIL')
         receiver = getenv('REC_EMAIL')
-        message = f"There was an error with josh_bot_9000... {error_to_send}"
+        pw = getenv('SENDER_PW')
+        msg = f"""\
+        Subject: JoshBot9000 Error
+
+        Error: {error_to_send}
+        """
+        context = create_default_context()
         try:
-            smtpObj = SMTP('0.0.0.0')
-            smtpObj.sendmail(sender, receiver, message)
-            print("Successfully sent email")
+            server = SMTP(smtp_server, port)
+            server.starttls(context=context)
+            server.login(sender, pw)
+            server.sendmail(sender, receiver, msg)         
+            print(f"…÷÷÷ Sent error email to {sender} ÷÷÷…")
         except SMTPException:
             print("Error: unable to send email")
+        finally:
+            server.quit()

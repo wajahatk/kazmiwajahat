@@ -17,9 +17,12 @@ API_KEY=<Access token goes here>
 API_SECRET=<Access token secret goes here>
 SQLALCHEMY_DATABASE_URI=sqlite:///twitter.db
 SQLALCHEMY_TRACK_MODIFICATIONS=False
-SENDER_EMAIL=<Your email goes here>
+SENDER_EMAIL=<Your Gmail goes here> **Must be gmail unless you change the smtp type**
+SENDER_PW=<Your Gmail PW>
 REC_EMAIL=<Where you want to send emails about errors>
 ```
+
+-> For the error mailer to work, make sure you allow 'Less secure app' access in your gmail setting!
 
 -> Create the Github Repo where you plan on keeping the code for this bot.
 
