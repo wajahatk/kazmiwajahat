@@ -160,6 +160,7 @@ class TwitterBot:
 
 # ---------------------------------- Run Bot --------------------------------- #
 if __name__ == "__main__":
+    
     print('|-|-|Configuring twitter-to-sqlite...|-|-|')
     TwitterBot.create_auth_json()
     sleep(10)

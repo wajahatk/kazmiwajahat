@@ -67,8 +67,8 @@ class BotLogic:
                 else:
                     ignored_count += 1
             except tweepy.TweepError as error:
-                BotLogic.send_error_email(error)
                 print("-> Couldn't update your status this time around.")
+                BotLogic.send_error_email(error)
                 print(f"-> Error: {error.reason}")
         print(f"¨…¨…¨Deleted {deletion_count} tweets from user-timeline¨…¨…¨")
         print(f"         ¨…¨…¨Ignored {ignored_count} tweets¨…¨…¨")
@@ -103,8 +103,8 @@ class BotLogic:
                     print("-> Retweet Done!")
                     BotLogic.short_wait()
                 except tweepy.TweepError as error:
-                    BotLogic.send_error_email(error)
                     print(error.reason)
+                    BotLogic.send_error_email(error)
                     pass
                 BotLogic.med_wait()
 
@@ -127,10 +127,11 @@ class BotLogic:
                     api.retweet(mention.id)
                     BotLogic.short_wait()
                 except tweepy.TweepError as error:
-                    BotLogic.send_error_email(error)
                     print(f"-> Error: {error.reason}")
+                    BotLogic.send_error_email(error)
                     pass
                 except AttributeError as att_error:
+                    print(f"‹‹‹‹ Attribute Error => {att_err} ››››")
                     BotLogic.send_error_email(att_error)
                     pass
             if mention.user.id not in people_i_follow:
@@ -139,8 +140,8 @@ class BotLogic:
                     print(f"-> Just followed @{mention.user.screen_name}!")
                     BotLogic.short_wait()
                 except tweepy.TweepError as error:
-                    BotLogic.send_error_email(error)
                     print(f"-> Error: {error.reason}")
+                    BotLogic.send_error_email(error)
                     pass
             BotLogic.short_wait()
         #Update mentions in database:
@@ -154,15 +155,20 @@ class BotLogic:
     def find_trending_topics_in_usa():
         trending_topic_list = []
         trends_available = api.trends_available()
-        usa = api.trends_place(23424977)  #USA = 23424977
-        for trend_list in usa:
-            for (k,v) in trend_list.items():
-                for event in v:
-                    if isinstance(event, dict):
-                        for (a, b) in event.items():
-                            if a == 'name':
-                                trending_topic_list.append(b)
-        return trending_topic_list
+        try:
+            usa = api.trends_place(23424977)  #USA = 23424977
+            for trend_list in usa:
+                for (k,v) in trend_list.items():
+                    for event in v:
+                        if isinstance(event, dict):
+                            for (a, b) in event.items():
+                                if a == 'name':
+                                    trending_topic_list.append(b)
+            return trending_topic_list
+        except tweepy.TweepError as error:
+            print(f"-> Error: {error.reason}")
+            BotLogic.send_error_email(error)
+            pass
 
     # ------------------------------ Follower Logic ------------------------------ #
     def follow_back(followers, people_i_follow):
@@ -174,8 +180,8 @@ class BotLogic:
                     print(f"-> Just followed @{user.screen_name}!")
                     BotLogic.med_wait()
                 except tweepy.TweepError as error:
-                    BotLogic.send_error_email(error)
                     print(f"-> Error: {error.reason}")
+                    BotLogic.send_error_email(error)
                     pass
             elif person in people_i_follow:
                 user = api.get_user(person)
@@ -190,39 +196,64 @@ class BotLogic:
                     api.destroy_friendship(person)
                     print(f"-> Unfollowed @{user.screen_name}...")
                 except tweepy.TweepError as error:
-                    BotLogic.send_error_email(error)
                     print(f"-> Error: {error.reason}")
+                    BotLogic.send_error_email(error)
                     pass
 
     def get_people_i_follow():
-        following = api.friends()
+        try:
+            following = api.friends()
+        except tweepy.TweepError as error:
+            print(f"-> Error: {error.reason}")
+            BotLogic.send_error_email(error)
+            pass
         following_id_list = []
-        for page in tweepy.Cursor(api.friends_ids).pages():
-            following_id_list.extend(page)
-        return following_id_list 
+        try:
+            for page in tweepy.Cursor(api.friends_ids).pages():
+                following_id_list.extend(page)
+            return following_id_list
+        except tweepy.TweepError as error:
+            print(f"-> Error: {error.reason}")
+            BotLogic.send_error_email(error)
+            pass
 
     def get_my_followers():
-        followers = api.followers()
+        try:
+            followers = api.followers()
+        except tweepy.TweepError as error:
+            print(f"-> Error: {error.reason}")
+            BotLogic.send_error_email(error)
+            pass
         follower_id_list = []
-        for page in tweepy.Cursor(api.followers_ids).pages():
-            follower_id_list.extend(page)
-            sleep(10)
-        return follower_id_list
+        try:
+            for page in tweepy.Cursor(api.followers_ids).pages():
+                follower_id_list.extend(page)
+                sleep(10)
+            return follower_id_list
+        except tweepy.TweepError as error:
+            print(f"-> Error: {error.reason}")
+            BotLogic.send_error_email(error)
+            pass
         
     def find_users_to_follow_based_on_trend_list(trend_list):
         tweet_number = 1
         trends = trend_list
         for trend in trends:
-            tweets = tweepy.Cursor(api.search, trend).items(tweet_number)
-            for tweet in tweets:
-                try:
-                    api.create_friendship(tweet.user.id)
-                    print(f'-> Followed @{tweet.user.screen_name}!')
-                    BotLogic.med_wait()
-                except tweepy.TweepError as error:
-                    BotLogic.send_error_email(error)
-                    print(f"-> ERROR: {error.reason}")
-                    pass
+            try:
+                tweets = tweepy.Cursor(api.search, trend).items(tweet_number)
+                for tweet in tweets:
+                    try:
+                        api.create_friendship(tweet.user.id)
+                        print(f'-> Followed @{tweet.user.screen_name}!')
+                        BotLogic.med_wait()
+                    except tweepy.TweepError as error:
+                        BotLogic.send_error_email(error)
+                        print(f"-> ERROR: {error.reason}")
+                        pass
+            except tweepy.TweepError as error:
+                print(f"-> Error: {error.reason}")
+                BotLogic.send_error_email(error)
+                pass 
             BotLogic.short_wait()
 
     # ------------------------------- Mailer Logic ------------------------------- #
