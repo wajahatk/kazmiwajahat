@@ -275,10 +275,9 @@ class BotLogic:
         receiver = getenv('REC_EMAIL')
         pw = getenv('SENDER_PW')
         msg = f"""\
-        Subject: <JoshBot9000 Error>
+        Subject: JoshBot9000 Error
 
-        Error: {error_to_send}
-        """
+        Error: {error_to_send}."""
         context = create_default_context()
         try:
             server = SMTP(smtp_server, port)
