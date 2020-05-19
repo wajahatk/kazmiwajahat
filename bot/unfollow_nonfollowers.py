@@ -1,4 +1,5 @@
 from os import getenv
+from .waits import short_wait
 from .mailer import send_error_email
 from tweepy import Cursor, TweepError, API, OAuthHandler
 
@@ -29,9 +30,10 @@ def unfollow_nonfollowers(followers, people_i_follow):
                     print(f"-> {user.screen_name} not in followers")
                     api.destroy_friendship(person)
                     print(f"-> Unfollowed @{user.screen_name}...")
+                    short_wait.short_wait()
                 except TweepError as error:
                     print(f"-> Error: {error.reason}")
-                    send_error_email(error)
+                    send_error_email.send_error_email(error)
                     pass
 
 

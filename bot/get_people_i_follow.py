@@ -26,7 +26,7 @@ def get_people_i_follow():
         following = api.friends()
     except TweepError as error:
         print(f"-> Error: {error.reason}")
-        send_error_email(error)
+        send_error_email.send_error_email(error)
         pass
     following_id_list = []
     try:
@@ -35,7 +35,7 @@ def get_people_i_follow():
         return following_id_list
     except TweepError as error:
         print(f"-> Error: {error.reason}")
-        send_error_email(error)
+        send_error_email.send_error_email(error)
         pass
 
 

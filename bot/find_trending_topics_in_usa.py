@@ -44,7 +44,7 @@ def find_trending_topics_in_usa():
         return trending_topic_list
     except TweepError as error:
         print(f"-> Error: {error.reason}")
-        send_error_email(error)
+        send_error_email.send_error_email(error)
         pass
 
 

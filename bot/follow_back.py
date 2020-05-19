@@ -30,10 +30,10 @@ def follow_back(followers, people_i_follow):
                     api.create_friendship(person)
                     user = api.get_user(person)
                     print(f"-> Just followed @{user.screen_name}!")
-                    med_wait()
+                    med_wait.med_wait()
                 except TweepError as error:
                     print(f"-> Error: {error.reason}")
-                    send_error_email(error)
+                    send_error_email.send_error_email(error)
                     pass
             elif person in people_i_follow:
                 try:
@@ -41,7 +41,7 @@ def follow_back(followers, people_i_follow):
                     print(f"-> You already follow @{user.screen_name}.")
                 except TweepError as error:
                     print(f"-> Error: {error.reason}")
-                    send_error_email(error)
+                    send_error_email.send_error_email(error)
                     pass
 
 

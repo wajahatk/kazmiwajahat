@@ -32,7 +32,7 @@ def delete_old_tweets():
         try:
             timeline = Cursor(api.user_timeline).items()
         except TweepError as error:
-            send_error_email(error)
+            send_error_email.send_error_email(error)
             print(f"-> Error: {error.reason}")
         deletion_count = 0
         ignored_count = 0
@@ -47,13 +47,13 @@ def delete_old_tweets():
                 else:
                     ignored_count += 1
             except TweepError as error:
-                send_error_email(error)
+                send_error_email.send_error_email(error)
                 print(f"-> Error: {error.reason}")
         print(f"¨…¨…¨Deleted {deletion_count} tweets from user-timeline¨…¨…¨")
         print(f"         ¨…¨…¨Ignored {ignored_count} tweets¨…¨…¨")
     except Exception as error:
         print(f"-> Error: {error}")
-        send_error_email(error)
+        send_error_email.send_error_email(error)
         pass
 
 # ---------------------------------------------------------------------------- #

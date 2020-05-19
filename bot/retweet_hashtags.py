@@ -33,15 +33,15 @@ def retweet_hashtags(hashtag_list):
                 try:
                     tweet.retweet()
                     print("-> Retweet Done!")
-                    short_wait()
+                    short_wait.short_wait()
                 except TweepError as error:
                     print(error.reason)
-                    send_error_email(error)
+                    send_error_email.send_error_email(error)
                     pass
-                med_wait()
+                med_wait.med_wait()
         except TweepError as error:
             print(f"-> ERROR: {error.reason}")
-            send_error_email(error)
+            send_error_email.send_error_email(error)
             pass
 
 

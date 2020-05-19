@@ -32,16 +32,16 @@ def find_new_friends_based_on_trend_list(trend_list):
                 try:
                     api.create_friendship(tweet.user.id)
                     print(f'-> Followed @{tweet.user.screen_name}!')
-                    med_wait()
+                    med_wait.med_wait()
                 except TweepError as error:
-                    send_error_email(error)
+                    send_error_email.send_error_email(error)
                     print(f"-> ERROR: {error.reason}")
                     pass
         except TweepError as error:
             print(f"-> Error: {error.reason}")
-            send_error_email(error)
+            send_error_email.send_error_email(error)
             pass 
-        short_wait()
+        short_wait.short_wait()
 
 
 # ---------------------------------------------------------------------------- #
