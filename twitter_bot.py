@@ -1,7 +1,7 @@
 from time import sleep
 from os import getenv, system
-from bot.mailer import send_error_email
 from subprocess import Popen, PIPE
+from bot.mailer import send_error_email
 from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, g, make_response
 from tweepy import Cursor, TweepError, API, OAuthHandler

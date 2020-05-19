@@ -1,10 +1,10 @@
 from os import getenv, system
-from .waits.short_wait import short_wait
-from .waits.med_wait import med_wait
-from .waits.long_wait import long_wait
-from .mailer.send_error_email import send_error_email
+from models import MentionsTweets
+from waits.med_wait import med_wait
+from waits.long_wait import long_wait
+from waits.short_wait import short_wait
+from mailer.send_error_email import send_error_email
 from tweepy import Cursor, TweepError, OAuthHandler, API
-from .models import MentionsTweets
 
 
 # ---------------------------------------------------------------------------- #
