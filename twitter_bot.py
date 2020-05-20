@@ -109,8 +109,39 @@ class TwitterBot:
     def retweet_my_hashtags():
         print("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=")
         print("Now, I'm searching for hashtag posts to retweet...")
+        hashtags = [
+            '#dc',
+            '#sanfrancisco',
+            '#la',
+            '#ny',
+            '#webdevelopment', 
+            '#skateboarding',
+            '#WashingtonDC',
+            '#sanfrancisco',
+            '#losangeles',
+            '#dmvmusic', 
+            '#coding', 
+            '#100daysofcode',
+            '#dcrestaurant',
+            '#sfrestaurant',
+            '#larestaurant',
+            '#nyrestaurant',
+            '#gamedev',
+            '#dcevents',
+            '#sfevents',
+            '#laevents',
+            '#nyevents',
+            '#dcnightlife',
+            '#lanightlife',
+            '#sfnightlife',
+            '#nynightlife',
+            '#ufc',
+            '#gamingnews',
+            '#newmusic',
+            '#ustreetdc',
+        ]
         try:
-            retweet_hashtags.retweet_hashtags()
+            retweet_hashtags.retweet_hashtags(hashtags)
             print('•••• Finding people to follow based on your hasthtags: ••••')
             find_new_friends_based_on_trend_list.find_new_friends_based_on_trend_list(hashtags)
         except Exception as error:
