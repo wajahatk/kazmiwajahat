@@ -1,11 +1,13 @@
 from time import sleep
+from requests import get
 from os import getenv, system
 from subprocess import Popen, PIPE
 from bot.mailer import send_error_email
 from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, g, make_response
-from tweepy import Cursor, TweepError, API, OAuthHandler
+from bot.dms.refresh_dm_db import refresh_dm_db
 from bot.waits import short_wait, med_wait, long_wait
+from tweepy import Cursor, TweepError, API, OAuthHandler
 from bot import (
     models,
     pick_status,
@@ -105,41 +107,11 @@ class TwitterBot:
     #Retweet hashtags from list:
     #Follow users from on search based on same list:
     def retweet_my_hashtags():
-        hashtags = [
-            '#dc',
-            '#sanfrancisco',
-            '#la',
-            '#ny',
-            '#webdevelopment', 
-            '#skateboarding',
-            '#WashingtonDC',
-            '#sanfrancisco',
-            '#losangeles',
-            '#dmvmusic', 
-            '#coding', 
-            '#100daysofcode',
-            '#dcrestaurant',
-            '#sfrestaurant',
-            '#larestaurant',
-            '#nyrestaurant',
-            '#gamedev',
-            '#dcevents',
-            '#sfevents',
-            '#laevents',
-            '#nyevents',
-            '#dcnightlife',
-            '#lanightlife',
-            '#sfnightlife',
-            '#nynightlife',
-            '#ufc',
-            '#gamingnews',
-            '#newmusic',
-            '#ustreetdc',
-        ]
         print("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=")
         print("Now, I'm searching for hashtag posts to retweet...")
         try:
-            retweet_hashtags.retweet_hashtags(hashtags)
+            retweet_hashtags.retweet_hashtags()
+            print('•••• Finding people to follow based on your hasthtags: ••••')
             find_new_friends_based_on_trend_list.find_new_friends_based_on_trend_list(hashtags)
         except Exception as error:
             print(f"-> ERROR @ 'retweet_my_hashtags': {error}")
@@ -218,7 +190,7 @@ class TwitterBot:
         print("Now, I'm searching for trending topics in the USA for posts to retweet...")
         try:
             usa_trends = find_trending_topics_in_usa.find_trending_topics_in_usa()
-            retweet_hashtags,retweet_hashtags(usa_trends)
+            retweet_hashtags.retweet_hashtags(usa_trends)
         except Exception as error:
             print(f"-> ERROR @ 'retweet_trending_topics: {error}")
             try:
@@ -255,6 +227,7 @@ class TwitterBot:
         try:
             system('twitter-to-sqlite user-timeline twitter.db')
             system('twitter-to-sqlite mentions-timeline twitter.db')
+            refresh_dm_db()
         except Exception as error:
             print(f"-> ERROR @ 'refresh_db: {error}")
             try:
@@ -268,6 +241,7 @@ class TwitterBot:
 
 # ---------------------------------- Run Bot --------------------------------- #
 if __name__ == "__main__":
+    url = 'http://joshbot9000.herokuapp.com/'
     print('|-|-|Configuring twitter-to-sqlite...|-|-|')
     TwitterBot.set_up_ttsql()
     sleep(10)
@@ -280,37 +254,45 @@ if __name__ == "__main__":
         TwitterBot.post_status()
         print('┬─┬ノ( ಠ ل͜ಠノ)')
         print("////-------Med Rest Period-------////")
+        get(url)
         med_wait.med_wait()
         TwitterBot.retweet_my_hashtags()
         print('(┛ಠ_ಠ)┛彡┻━┻')
         print("////-------Medium Rest Period-------////")
+        get(url)
         med_wait.med_wait()
         TwitterBot.follow_back()
         TwitterBot.post_status()
         print('┳━┳ ヽ(ಠل͜ಠ)ﾉ')
         print("////-------Medium Rest Period-------////")
+        get(url)
         med_wait.med_wait()
         TwitterBot.retweet_trending_topics()
         print('(╯°Д°)╯︵/(.□ . \)')
         print("////-------Medium Rest Period-------////")
+        get(url)
         med_wait.med_wait() 
         TwitterBot.follow_trendy_users()
         TwitterBot.post_status()
         print('(˚Õ˚)ر ~~~~╚╩╩╝')
         print("////-------Medium Rest Period-------////")
+        get(url)
         short_wait.short_wait()
         TwitterBot.unfollow_nonfollowers()
         print('┏━┓┏━┓┏━┓ ︵ /(^.^/)')
         print("////-------Medium Rest Period-------////")
+        get(url)
         short_wait.short_wait()
         TwitterBot.reply_to_mentions_and_follow()
         print('┻━┻︵ \(°□°)/ ︵ ┻━┻')
         print("////-------Medium Rest Period-------////")
+        get(url)
         med_wait.med_wait()
         print("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=")
         print("Getting ready to start again!")
         print("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=")
         print('┏━┓┏━┓┏━┓ ︵ /(^.^/)')
         print("////-------Long Rest Period-------////")
+        get(url)
         long_wait.long_wait()
         

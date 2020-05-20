@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "bed9926990f1f868c0bae345caa1465f599cf2f45b2429602e3352de696c4d1d"
+            "sha256": "c8f0c63c19e009763ad2995abfaa979fffa399ac6fcc4ee4a8fed1be72c8cab8"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -104,6 +104,13 @@
             "index": "pypi",
             "version": "==2.5.3"
         },
+        "flask-script": {
+            "hashes": [
+                "sha256:6425963d91054cfcc185807141c7314a9c5ad46325911bd24dcb489bd0161c65"
+            ],
+            "index": "pypi",
+            "version": "==2.0.6"
+        },
         "flask-sqlalchemy": {
             "hashes": [
                 "sha256:0078d8663330dc05a74bc72b3b6ddc441b9a744e2f56fe60af1a5bfc81334327",
@@ -193,6 +200,13 @@
                 "sha256:e8313f01ba26fbbe36c7be1966a7b7424942f670f38e666995b88d012765b9be"
             ],
             "version": "==1.1.1"
+        },
+        "oauth": {
+            "hashes": [
+                "sha256:e769819ff0b0c043d020246ce1defcaadd65b9c21d244468a45a7f06cb88af5d"
+            ],
+            "index": "pypi",
+            "version": "==1.0.1"
         },
         "oauthlib": {
             "hashes": [
@@ -316,6 +330,14 @@
             ],
             "index": "pypi",
             "version": "==3.8.0"
+        },
+        "twitter": {
+            "hashes": [
+                "sha256:52545fd3b70d3d3807d3ce62d1a256727856d784d1630d64dedcc643aaf0b908",
+                "sha256:acdc85e5beea752967bb64c63bde8b915c49a31a01db1b2fecccf9f2c1d5c44d"
+            ],
+            "index": "pypi",
+            "version": "==1.18.0"
         },
         "twitter-to-sqlite": {
             "hashes": [

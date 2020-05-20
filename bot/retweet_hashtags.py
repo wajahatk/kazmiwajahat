@@ -23,6 +23,39 @@ api = API(auth, wait_on_rate_limit=True)
 
 
 # ---------------------------------------------------------------------------- #
+hashtags = [
+    '#dc',
+    '#sanfrancisco',
+    '#la',
+    '#ny',
+    '#webdevelopment', 
+    '#skateboarding',
+    '#WashingtonDC',
+    '#sanfrancisco',
+    '#losangeles',
+    '#dmvmusic', 
+    '#coding', 
+    '#100daysofcode',
+    '#dcrestaurant',
+    '#sfrestaurant',
+    '#larestaurant',
+    '#nyrestaurant',
+    '#gamedev',
+    '#dcevents',
+    '#sfevents',
+    '#laevents',
+    '#nyevents',
+    '#dcnightlife',
+    '#lanightlife',
+    '#sfnightlife',
+    '#nynightlife',
+    '#ufc',
+    '#gamingnews',
+    '#newmusic',
+    '#ustreetdc',
+]
+
+# ---------------------------------------------------------------------------- #
 def retweet_hashtags(hashtag_list):
     shuffle(hashtag_list)
     for hashtag in hashtag_list:
@@ -47,4 +80,4 @@ def retweet_hashtags(hashtag_list):
 
 # ---------------------------------------------------------------------------- #
 if __name__ == "__main__":
-    retweet_hashtags()
+    retweet_hashtags(hashtags)
