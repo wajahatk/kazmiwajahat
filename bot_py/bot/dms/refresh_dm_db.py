@@ -1,5 +1,5 @@
 from time import sleep
-from models import DM, db
+from .models import DM, db
 from os import getenv, system
 from tweepy import (
     API,
