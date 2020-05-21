@@ -7,8 +7,8 @@ from .waits.short_wait import short_wait
 from sqlalchemy.exc import IntegrityError
 from .mailer.send_error_email import send_error_email
 from tweepy import Cursor, TweepError, OAuthHandler, API
-from .friends_and_followers.get_my_followers import get_my_followers
-from .friends_and_followers.get_people_i_follow import get_people_i_follow
+from .get_friends_and_followers.get_my_followers import get_my_followers
+from .get_friends_and_followers.get_people_i_follow import get_people_i_follow
 
 
 # ---------------------------------------------------------------------------- #

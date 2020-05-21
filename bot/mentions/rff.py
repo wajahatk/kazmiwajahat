@@ -7,9 +7,9 @@ from .waits.med_wait import med_wait
 from .waits.long_wait import long_wait
 from .waits.short_wait import short_wait
 from sqlalchemy.exc import IntegrityError
-from .friends_and_followers.get_people_i_follow import get_people_i_follow
 from .mailer.send_error_email import send_error_email
 from tweepy import Cursor, TweepError, OAuthHandler, API
+from .get_friends_and_followers.get_people_i_follow import get_people_i_follow
 
 
 # ---------------------------------------------------------------------------- #

@@ -13,16 +13,11 @@ from bot.mentions.rff import retweet_favorite_follow
 from bot.waits import short_wait, med_wait, long_wait
 from bot.mailer.send_error_email import send_error_email
 from tweepy import Cursor, TweepError, API, OAuthHandler
+from bot.remove import delete_old_tweets, unfollow_nonfollowers
 from bot.mentions.refresh_mentions_db import refresh_mentions_db
-from bot.friends_and_followers import get_my_followers, get_people_i_follow
-from bot import (
-    follow_back,
-    retweet_hashtags,
-    delete_old_tweets,
-    unfollow_nonfollowers,
-    find_trending_topics_in_usa,
-    find_new_friends_based_on_trend_list,
-) 
+from bot.hashtags import retweet_hashtags, find_trending_topics_in_usa
+from bot.new_followers import find_new_friends_based_on_trend_list, follow_back
+from bot.get_friends_and_followers import get_my_followers, get_people_i_follow
 
 
 # ----------------------------------- Flask ---------------------------------- #
@@ -313,7 +308,7 @@ if __name__ == "__main__":
         print('(˚Õ˚)ر ~~~~╚╩╩╝')
         print("////-------Medium Rest Period-------////")
         get(url)
-        short_wait.short_wait() 
+        short_wait.short_wait()
         TwitterBot.unfollow_nonfollowers()
         print('┏━┓┏━┓┏━┓ ︵ /(^.^/)')
         print("////-------Medium Rest Period-------////")
