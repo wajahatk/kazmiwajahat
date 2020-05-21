@@ -1,7 +1,7 @@
 from os import getenv
 from random import shuffle
 from .waits import short_wait, med_wait
-from .mailer import send_error_email
+from .mailer.send_error_email import send_error_email
 from tweepy import Cursor, TweepError, OAuthHandler, API
 
 
@@ -22,13 +22,22 @@ auth.set_access_token(access_token, access_token_secret)
 api = API(auth, wait_on_rate_limit=True)
 
 
+def pick_random_hashtags(hashtag_list):
+    search_list = []
+    shuffle(hashtag_list)
+    for ht in range(1, 11):
+        search_list.append(ht)
+    return search_list
+
+
 # ---------------------------------------------------------------------------- #
 def retweet_hashtags(hashtag_list):
-    shuffle(hashtag_list)
-    for hashtag in hashtag_list:
+    htlist = pick_random_hashtags(hashtag_list)
+    shuffle(htlist)
+    for ht in htlist:
         tweetNumber = 1
         try:
-            tweets = Cursor(api.search, hashtag).items(tweetNumber)
+            tweets = Cursor(api.search, ht).items(tweetNumber)
             for tweet in tweets:
                 try:
                     tweet.retweet()
@@ -36,15 +45,46 @@ def retweet_hashtags(hashtag_list):
                     short_wait.short_wait()
                 except TweepError as error:
                     print(error.reason)
-                    send_error_email.send_error_email(error)
+                    send_error_email(error)
                     pass
                 med_wait.med_wait()
         except TweepError as error:
             print(f"-> ERROR: {error.reason}")
-            send_error_email.send_error_email(error)
+            send_error_email(error)
             pass
 
 
 # ---------------------------------------------------------------------------- #
 if __name__ == "__main__":
+    hashtags = [
+            '#dc',
+            '#sanfrancisco',
+            '#la',
+            '#ny',
+            '#webdevelopment', 
+            '#skateboarding',
+            '#WashingtonDC',
+            '#sanfrancisco',
+            '#losangeles',
+            '#dmvmusic', 
+            '#coding', 
+            '#100daysofcode',
+            '#dcrestaurant',
+            '#sfrestaurant',
+            '#larestaurant',
+            '#nyrestaurant',
+            '#gamedev',
+            '#dcevents',
+            '#sfevents',
+            '#laevents',
+            '#nyevents',
+            '#dcnightlife',
+            '#lanightlife',
+            '#sfnightlife',
+            '#nynightlife',
+            '#ufc',
+            '#gamingnews',
+            '#newmusic',
+            '#ustreetdc',
+        ]
     retweet_hashtags(hashtags)

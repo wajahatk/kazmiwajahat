@@ -1,24 +1,26 @@
 from time import sleep
 from requests import get
+from random import choice
+from string import digits
+from datetime import datetime
 from os import getenv, system
 from subprocess import Popen, PIPE
-from bot.mailer import send_error_email
 from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, g, make_response
+from bot.status.pick_status import pick_status
 from bot.dms.refresh_dm_db import refresh_dm_db
+from bot.mentions.rff import retweet_favorite_follow
 from bot.waits import short_wait, med_wait, long_wait
+from bot.mailer.send_error_email import send_error_email
 from tweepy import Cursor, TweepError, API, OAuthHandler
+from bot.mentions.refresh_mentions_db import refresh_mentions_db
+from bot.friends_and_followers import get_my_followers, get_people_i_follow
 from bot import (
-    models,
-    pick_status,
     follow_back,
     retweet_hashtags,
-    get_my_followers,
     create_auth_json,
     delete_old_tweets,
-    get_people_i_follow,
     unfollow_nonfollowers,
-    retweet_favorite_follow,
     find_trending_topics_in_usa,
     find_new_friends_based_on_trend_list,
 ) 
@@ -56,31 +58,23 @@ api = API(auth, wait_on_rate_limit=True)
 
 # ---------------------------------------------------------------------------- #
 class TwitterBot:
-    #Create auth.json for twitter-to-sqlite
-    def set_up_ttsql():
-        try:
-            create_auth_json.create_auth_json()
-        except Exception as error:
-            print(f"-> ERROR @ 'set_up_ttsql': {error}")
-            try:
-                send_error_email.send_error_email(error)
-            except Exception as error:
-                print(f"-> ERROR @ 'set_up_ttsql'.'send_error_email': {error}")
-                pass
-            pass
+    def id_generator(size=6, chars=digits):
+        return ''.join(choice(chars) for x in range(size))
 
     #Delete old tweets:
     def remove_old_tweets_from_timeline():
         print("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=")
-        print("Picking a status from the list...")
+        print("–=–=– Deleting Old Tweets From Timeline... –=–=–")
         try:
             delete_old_tweets.delete_old_tweets()
         except Exception as error:
-            print(f"-> ERROR @ 'remove_old_tweets_from_timeline': {error}")
+            emsg = (f"#{TwitterBot.id_generator()} @ {datetime.now()} => {error}")
+            print(f"-> ERROR @ 'remove_old_tweets_from_timeline': {emsg}")
             try:
-                send_error_email.send_error_email(error)
+                send_error_email(emsg)
             except Exception as error:
-                print(f"-> ERROR @ 'remove_old_tweets_from_timeline'.'send_error_email': {error}")
+                emsg = (f"#{TwitterBot.id_generator()} @ {datetime.now()} => {error}")
+                print(f"-> ERROR @ 'remove_old_tweets_from_timeline'.'send_error_email': {emsg}")
                 pass
             pass
         print(f"** Done deleting tweets... **")
@@ -89,16 +83,19 @@ class TwitterBot:
     #Update status from list:
     def post_status():
         print("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=")
+        print("Picking a status from the list...")
         try:
-            status = pick_status.pick_status()
+            status = pick_status()
             api.update_status(status)
             print("-> Status posted!!!")
         except Exception as error:
-            print(f"-> ERROR @ 'post_status': {error}")
+            emsg = (f"#{TwitterBot.id_generator()} @ {datetime.now()} => {error}")
+            print(f"-> ERROR @ 'post_status': {emsg}")
             try:
-                send_error_email.send_error_email(error)
+                send_error_email(emsg)
             except Exception as error:
-                print(f"-> ERROR @ 'post_status'.'send_error_email': {error}")
+                emsg = (f"#{TwitterBot.id_generator()} @ {datetime.now()} => {error}")
+                print(f"-> ERROR @ 'post_status'.'send_error_email': {emsg}")
                 pass
             pass
         print("** Done with Status... **")
@@ -109,47 +106,18 @@ class TwitterBot:
     def retweet_my_hashtags():
         print("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=")
         print("Now, I'm searching for hashtag posts to retweet...")
-        hashtags = [
-            '#dc',
-            '#sanfrancisco',
-            '#la',
-            '#ny',
-            '#webdevelopment', 
-            '#skateboarding',
-            '#WashingtonDC',
-            '#sanfrancisco',
-            '#losangeles',
-            '#dmvmusic', 
-            '#coding', 
-            '#100daysofcode',
-            '#dcrestaurant',
-            '#sfrestaurant',
-            '#larestaurant',
-            '#nyrestaurant',
-            '#gamedev',
-            '#dcevents',
-            '#sfevents',
-            '#laevents',
-            '#nyevents',
-            '#dcnightlife',
-            '#lanightlife',
-            '#sfnightlife',
-            '#nynightlife',
-            '#ufc',
-            '#gamingnews',
-            '#newmusic',
-            '#ustreetdc',
-        ]
         try:
-            retweet_hashtags.retweet_hashtags(hashtags)
+            retweet_hashtags.retweet_hashtags()
             print('•••• Finding people to follow based on your hasthtags: ••••')
             find_new_friends_based_on_trend_list.find_new_friends_based_on_trend_list(hashtags)
         except Exception as error:
-            print(f"-> ERROR @ 'retweet_my_hashtags': {error}")
+            emsg = (f"#{TwitterBot.id_generator()} @ {datetime.now()} => {error}")
+            print(f"-> ERROR @ 'retweet_my_hashtags': {emsg}")
             try:
-                send_error_email.send_error_email(error)
+                send_error_email(emsg)
             except Exception as error:
-                print(f"-> ERROR @ 'retweet_my_hashtags'.'send_error_email': {error}")
+                emsg = (f"#{TwitterBot.id_generator()} @ {datetime.now()} => {error}")
+                print(f"-> ERROR @ 'retweet_my_hashtags'.'send_error_email': {emsg}")
                 pass
             pass
         print("** Done Retweeting... **")
@@ -161,15 +129,15 @@ class TwitterBot:
         print("Replying to user's that have mentioned me and following them!")
         # Set all tweets that mention my user to list:
         try:
-            mentions = api.mentions_timeline(tweet_mode='extended')
-            following = get_people_i_follow.get_people_i_follow()
-            retweet_favorite_follow.retweet_favorite_follow(mentions, following)
+            retweet_favorite_follow()
         except Exception as error:
-            print("-> ERROR @ 'reply_to_mentions_and_follow'")
+            emsg = (f"#{TwitterBot.id_generator()} @ {datetime.now()} => {error}")
+            print(f"-> ERROR @ 'reply_to_mentions_and_follow' : {emsg}")
             try:
-                send_error_email.send_error_email(error)
+                send_error_email(emsg)
             except Exception as error:
-                print(f"-> ERROR @ 'reply_to_mentions_and_follow'.'send_error_email': {error}")
+                emsg = (f"#{TwitterBot.id_generator()} @ {datetime.now()} => {error}")
+                print(f"-> ERROR @ 'reply_to_mentions_and_follow'.'send_error_email': {emsg}")
                 pass
             pass
         print("** Done with mentions... **")
@@ -185,11 +153,13 @@ class TwitterBot:
             following = get_people_i_follow.get_people_i_follow()
             follow_back.follow_back(followers, following)
         except Exception as error:
-            print(f"-> ERROR @ 'follow_back': {error}")
+            emsg = (f"#{TwitterBot.id_generator()} @ {datetime.now()} => {error}")
+            print(f"-> ERROR @ 'follow_back': {emsg}")
             try:
-                send_error_email.send_error_email(error)
+                send_error_email(emsg)
             except Exception as error:
-                print(f"-> ERROR @ 'follow_back'.'send_error_email': {error}")
+                emsg = (f"#{TwitterBot.id_generator()} @ {datetime.now()} => {error}")
+                print(f"-> ERROR @ 'follow_back'.'send_error_email': {emsg}")
                 pass
             pass
         print("** Done with 'Follow Back' **")
@@ -205,11 +175,13 @@ class TwitterBot:
             following = get_people_i_follow.get_people_i_follow()
             unfollow_nonfollowers.unfollow_nonfollowers(followers, following)
         except Exception as error:
-            print(f"-> ERROR @ 'unfollow_nonfollowers': {error}")
+            emsg = (f"#{TwitterBot.id_generator()} @ {datetime.now()} => {error}")
+            print(f"-> ERROR @ 'unfollow_nonfollowers': {emsg}")
             try:
-                send_error_email.send_error_email(error)
+                send_error_email(emsg)
             except Exception as error:
-                print(f"-> ERROR @ 'unfollow_nonfollowers'.'send_error_email': {error}")
+                emsg = (f"#{TwitterBot.id_generator()} @ {datetime.now()} => {error}")
+                print(f"-> ERROR @ 'unfollow_nonfollowers'.'send_error_email': {emsg}")
                 pass
             pass
         print("** Done unfollowing... **")
@@ -223,11 +195,12 @@ class TwitterBot:
             usa_trends = find_trending_topics_in_usa.find_trending_topics_in_usa()
             retweet_hashtags.retweet_hashtags(usa_trends)
         except Exception as error:
-            print(f"-> ERROR @ 'retweet_trending_topics: {error}")
+            emsg = (f"#{TwitterBot.id_generator()} @ {datetime.now()} => {error}")
+            print(f"-> ERROR @ 'retweet_trending_topics: {emsg}")
             try:
-                send_error_email.send_error_email(error)
+                send_error_email(emsg)
             except Exception as error:
-                print(f"-> ERROR @ 'retweet_trending_topics'.'send_error_email': {error}")
+                print(f"-> ERROR @ 'retweet_trending_topics'.'send_error_email': {emsg}")
                 pass
             pass
         print("** Done Retweeting... **")
@@ -241,11 +214,12 @@ class TwitterBot:
             trends = find_trending_topics_in_usa.find_trending_topics_in_usa()
             find_new_friends_based_on_trend_list.find_new_friends_based_on_trend_list(trends)
         except Exception as error:
-            print(f"-> ERROR @ 'follow_trendy_users: {error}")
+            emsg = (f"#{TwitterBot.id_generator()} @ {datetime.now()} => {error}")
+            print(f"-> ERROR @ 'follow_trendy_users:#{emsg}")
             try:
-                send_error_email.send_error_email(error)
+                send_error_email(emsg)
             except Exception as error:
-                print(f"-> ERROR @ 'follow_trendy_users'.'send_error_email': {error}")
+                print(f"-> ERROR @ 'follow_trendy_users'.'send_error_email': {emsg}")
                 pass
             pass
         print("** Done Following trendy users... **")
@@ -254,17 +228,18 @@ class TwitterBot:
     #Use twitter-to-sqlite to refresh dbs:
     def refresh_db():
         print("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=")
-        print('Updating user-timeline & mentions DBs... This may take a few mins...')
+        print('Updating DBs... This may take a few mins...')
         try:
-            system('twitter-to-sqlite user-timeline twitter.db')
-            system('twitter-to-sqlite mentions-timeline twitter.db')
+            refresh_mentions_db()
             refresh_dm_db()
         except Exception as error:
-            print(f"-> ERROR @ 'refresh_db: {error}")
+            emsg = (f"#{TwitterBot.id_generator()} @ {datetime.now()} => {error}")
+            print(f"-> ERROR @ 'refresh_db: {emsg}")
             try:
-                send_error_email.send_error_email(error)
+                send_error_email(emsg)
             except Exception as error:
-                print(f"-> ERROR @ 'refresh_db'.'send_error_email': {error}")
+                emsg = (f"#{TwitterBot.id_generator()} @ {datetime.now()} => {error}")
+                print(f"-> ERROR @ 'refresh_db'.'send_error_email': {emsg}")
                 pass
             pass
         print("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=")
@@ -273,12 +248,12 @@ class TwitterBot:
 # ---------------------------------- Run Bot --------------------------------- #
 if __name__ == "__main__":
     url = 'http://joshbot9000.herokuapp.com/'
-    print('|-|-|Configuring twitter-to-sqlite...|-|-|')
-    TwitterBot.set_up_ttsql()
-    sleep(10)
     while True:
-        print("Twitter Bot Started!")
+        print("ººººº Twitter Bot Started! ººººº")
+        print("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=")
+        sleep(2)
         print('┬─┬ノ( º _ ºノ)')
+        sleep(2)
         TwitterBot.remove_old_tweets_from_timeline()
         print('(╯°□°)╯︵ ┻━┻')
         TwitterBot.refresh_db()
@@ -308,7 +283,7 @@ if __name__ == "__main__":
         print('(˚Õ˚)ر ~~~~╚╩╩╝')
         print("////-------Medium Rest Period-------////")
         get(url)
-        short_wait.short_wait()
+        short_wait.short_wait() 
         TwitterBot.unfollow_nonfollowers()
         print('┏━┓┏━┓┏━┓ ︵ /(^.^/)')
         print("////-------Medium Rest Period-------////")

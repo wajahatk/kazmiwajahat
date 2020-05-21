@@ -1,4 +1,4 @@
-from random import choice
+from random import choice, shuffle
 
 
 # ---------------------------------------------------------------------------- #
@@ -18,6 +18,7 @@ def pick_status():
         "@jheeeeezy can create a bot for you, too! #bot #freelance #hitmeup #work",
         "https://jharriswebdev.herokuapp.com/ #freelance #webdev",
     ]
+    shuffle(status_options)
     return choice(status_options)
 
 

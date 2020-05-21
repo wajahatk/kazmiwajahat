@@ -26,7 +26,7 @@ api = API(auth, wait_on_rate_limit=True)
 
 
 # ---------------------------------------------------------------------------- #
-def refresh_dm_db():
+def create_dm_db():
     #Create DB
     try:
         system('python bot/dms/models.py db init')
@@ -41,6 +41,10 @@ def refresh_dm_db():
         pass
     #create table & db:
     db.create_all()
+
+
+def refresh_dm_db():
+    create_dm_db()
     #Get dm id's from Twitter:
     msg_id_list = [int(message.id) for message in api.list_direct_messages()]
     #Get dm id's that are in DB:

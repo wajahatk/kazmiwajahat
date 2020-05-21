@@ -1,7 +1,7 @@
-from os import environ, getenv, system
 import sqlite3
 from flask import Flask, g
 from flask_script import Manager
+from os import environ, getenv, system
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate, MigrateCommand
 # ----------------------------------- Flask ---------------------------------- #
