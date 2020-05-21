@@ -1,4 +1,5 @@
 from os import getenv
+from random import shuffle, choice
 from .waits import short_wait, med_wait
 from .mailer import send_error_email
 from tweepy import Cursor, TweepError, API, OAuthHandler
@@ -22,10 +23,19 @@ api = API(auth, wait_on_rate_limit=True)
 
 
 # ---------------------------------------------------------------------------- #
+def pick_random_hashtags(hashtag_list):
+    search_list = []
+    shuffle(hashtag_list)
+    for ht in range(1, 11):
+        search_list.append(choice(hashtag_list))
+    return search_list
+
 def find_new_friends_based_on_trend_list(trend_list):
     tweet_number = 1
     trends = trend_list
-    for trend in trends:
+    shuffle(trend_list)
+    htlist = pick_random_hashtags(trend_list)
+    for trend in htlist:
         try:
             tweets = Cursor(api.search, trend).items(tweet_number)
             for tweet in tweets:

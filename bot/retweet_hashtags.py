@@ -1,5 +1,5 @@
 from os import getenv
-from random import shuffle
+from random import shuffle, choice
 from .waits import short_wait, med_wait
 from .mailer.send_error_email import send_error_email
 from tweepy import Cursor, TweepError, OAuthHandler, API
@@ -26,7 +26,7 @@ def pick_random_hashtags(hashtag_list):
     search_list = []
     shuffle(hashtag_list)
     for ht in range(1, 11):
-        search_list.append(ht)
+        search_list.append(choice(hashtag_list))
     return search_list
 
 
