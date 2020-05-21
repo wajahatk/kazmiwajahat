@@ -49,9 +49,6 @@ def refresh_dm_db():
     msg_id_list = [int(message.id) for message in api.list_direct_messages()]
     #Get dm id's that are in DB:
     dms = [dm.msg_id for dm in DM.query.all()]
-    
-    print(f"DM_ID_LIST_BEFORE: {dms}")
-    print(f"•••• Adding dm ids to the db: ••••")
     #Compare DMs to DMs in DB
     for msg_id in msg_id_list:
         #If DM not in DB:
@@ -59,10 +56,6 @@ def refresh_dm_db():
             new_dm = DM(msg_id=msg_id)
             db.session.add(new_dm)
             db.session.commit()
-    
-    dms = [dm.msg_id for dm in DM.query.all()]
-    print(f"•••• Done adding dm ids to the db: ••••")
-    print(f"DM_ID_LIST_AFTER: {dms}")
     
 
 
