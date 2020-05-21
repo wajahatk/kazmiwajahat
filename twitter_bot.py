@@ -18,7 +18,6 @@ from bot.friends_and_followers import get_my_followers, get_people_i_follow
 from bot import (
     follow_back,
     retweet_hashtags,
-    create_auth_json,
     delete_old_tweets,
     unfollow_nonfollowers,
     find_trending_topics_in_usa,
