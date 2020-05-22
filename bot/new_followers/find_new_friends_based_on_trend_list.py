@@ -1,7 +1,8 @@
 from os import getenv
 from random import shuffle, choice
-from .waits import short_wait, med_wait
-from .mailer import send_error_email
+from .waits.med_wait import  med_wait
+from .waits.short_wait import short_wait
+from .mailer.send_error_email import send_error_email
 from tweepy import Cursor, TweepError, API, OAuthHandler
 
 
@@ -32,7 +33,6 @@ def pick_random_hashtags(hashtag_list):
 
 def find_new_friends_based_on_trend_list(trend_list):
     tweet_number = 1
-    trends = trend_list
     shuffle(trend_list)
     htlist = pick_random_hashtags(trend_list)
     for trend in htlist:
@@ -42,16 +42,16 @@ def find_new_friends_based_on_trend_list(trend_list):
                 try:
                     api.create_friendship(tweet.user.id)
                     print(f'-> Followed @{tweet.user.screen_name}!')
-                    med_wait.med_wait()
+                    med_wait()
                 except TweepError as error:
-                    send_error_email.send_error_email(error)
+                    send_error_email(error)
                     print(f"-> ERROR: {error.reason}")
                     pass
         except TweepError as error:
             print(f"-> Error: {error.reason}")
-            send_error_email.send_error_email(error)
+            send_error_email(error)
             pass 
-        short_wait.short_wait()
+        short_wait()
 
 
 # ---------------------------------------------------------------------------- #

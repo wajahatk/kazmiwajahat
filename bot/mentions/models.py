@@ -1,13 +1,13 @@
 import sqlite3
-from flask import Flask, g
+from os import environ
+from flask import Flask
 from flask_script import Manager
-from os import environ, getenv, system
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate, MigrateCommand
 # ----------------------------------- Flask ---------------------------------- #
 app = Flask(__name__)
 host = getenv('HOST')
-port = environ.get('PORT')
+port = getenv('PORT')
 # --------------------------------- DB Config -------------------------------- #
 app.config['SQLALCHEMY_DATABASE_URI'] = getenv('SQLALCHEMY_DATABASE_URI')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = getenv('SQLALCHEMY_TRACK_MODIFICATIONS')

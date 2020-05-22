@@ -1,18 +1,18 @@
+from os import getenv
 from time import sleep
+from flask import Flask
 from requests import get
 from random import choice
 from string import digits
 from datetime import datetime
-from os import getenv, system
-from subprocess import Popen, PIPE
 from flask_sqlalchemy import SQLAlchemy
-from flask import Flask, g, make_response
+from tweepy import Cursor, TweepError, API, OAuthHandler
+# ---------------------------------------------------------------------------- #
 from bot.status.pick_status import pick_status
 from bot.dms.refresh_dm_db import refresh_dm_db
 from bot.mentions.rff import retweet_favorite_follow
 from bot.waits import short_wait, med_wait, long_wait
 from bot.mailer.send_error_email import send_error_email
-from tweepy import Cursor, TweepError, API, OAuthHandler
 from bot.remove import delete_old_tweets, unfollow_nonfollowers
 from bot.mentions.refresh_mentions_db import refresh_mentions_db
 from bot.hashtags import retweet_hashtags, find_trending_topics_in_usa
@@ -130,6 +130,7 @@ class TwitterBot:
             '#gamingnews',
             '#newmusic',
             '#ustreetdc',
+            '#techjobs',
         ]
         try:
             retweet_hashtags.retweet_hashtags(hashtags)
