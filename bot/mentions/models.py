@@ -1,5 +1,5 @@
 import sqlite3
-from os import environ
+from os import getenv
 from flask import Flask
 from flask_script import Manager
 from flask_sqlalchemy import SQLAlchemy
