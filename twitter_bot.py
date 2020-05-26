@@ -25,12 +25,12 @@ app = Flask(__name__)
 
 
 # --------------------------------- DB Config -------------------------------- #
-app.config['SQLALCHEMY_DATABASE_URI'] = getenv('DATABASE_URL')
+app.config['SQLALCHEMY_DATABASE_URI'] = getenv('SQLALCHEMY_DATABASE_URI')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = getenv('SQLALCHEMY_TRACK_MODIFICATIONS')
 db = SQLAlchemy(app)
 host = getenv('HOST')
 port = getenv('PORT')
-#
+
 
 # -------------------------------- Twitter API ------------------------------- #
 # API key:
