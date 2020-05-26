@@ -30,6 +30,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = getenv('SQLALCHEMY_TRACK_MODIFICA
 db = SQLAlchemy(app)
 host = getenv('HOST')
 port = getenv('PORT')
+#
 
 # -------------------------------- Twitter API ------------------------------- #
 # API key:
