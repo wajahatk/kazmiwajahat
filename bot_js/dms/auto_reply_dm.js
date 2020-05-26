@@ -1,4 +1,3 @@
-require('newrelic');
 const express = require('express')
 const apps = express()
 const { Autohook } = require('twitter-autohook');
