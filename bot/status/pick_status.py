@@ -16,6 +16,7 @@ def pick_status():
         "Best bot in the biz, baby! #bot #webdev #coding #python",
         "*- Does robot dance to future music -*",
         "Share a meme with me!",
+        "Go like: https://www.facebook.com/jharriswebdev #freelance #webdev #100DaysOfCode #techjobs",
         "これは英語ではありません！",
         "@jheeeeezy can create a bot for you, too! #bot #freelance #hitmeup #work",
         "https://jharriswebdev.herokuapp.com/ #freelance #webdev",
