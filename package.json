@@ -1,0 +1,27 @@
+{
+  "name": "josh_bot_9000",
+  "version": "1.0.0",
+  "description": "An automated Twitter bot, created with Python 3 and Tweepy. Hosted on Heroku, running 24/7. Auto reply, like and favorite when mentioned. Auto-retweet specified hashtags. Posts status updates. Follows the users that follow the bot. Unfollows those not found in followers list. Deletes old tweets. Finds trends in USA and follows trendy users. Errors sent to gmail through smtp. Messages coming soon.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jharris711/josh_bot_9000.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jharris711/josh_bot_9000/issues"
+  },
+  "homepage": "https://github.com/jharris711/josh_bot_9000#readme",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "request": "^2.88.2",
+    "twitter-autohook": "^1.7.0",
+    "util": "^0.12.3"
+  }
+}
