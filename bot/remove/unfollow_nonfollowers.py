@@ -24,18 +24,22 @@ api = API(auth, wait_on_rate_limit=True)
 
 # ---------------------------------------------------------------------------- #
 def unfollow_nonfollowers(followers, people_i_follow):
-        for person in people_i_follow:
-            if person not in followers:
-                try:
-                    user = api.get_user(person)
-                    print(f"-> {user.screen_name} not in followers")
-                    api.destroy_friendship(person)
-                    print(f"-> Unfollowed @{user.screen_name}...")
-                    med_wait()
-                except TweepError as error:
-                    print(f"-> Error: {error.reason}")
-                    send_error_email.send_error_email(error)
-                    pass
+    count = 5
+    for person in people_i_follow:
+        if person not in followers:
+            try:
+                user = api.get_user(person)
+                print(f"-> {user.screen_name} not in followers")
+                api.destroy_friendship(person)
+                print(f"-> Unfollowed @{user.screen_name}...")
+                count -= 1
+                med_wait()
+                if count == 0:
+                    return
+            except TweepError as error:
+                print(f"-> Error: {error.reason}")
+                send_error_email.send_error_email(error)
+                pass
 
 
 # ---------------------------------------------------------------------------- #

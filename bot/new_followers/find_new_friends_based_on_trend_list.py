@@ -27,7 +27,7 @@ api = API(auth, wait_on_rate_limit=True)
 def pick_random_hashtags(hashtag_list):
     search_list = []
     shuffle(hashtag_list)
-    for ht in range(1, 11):
+    for ht in range(1, 4):
         search_list.append(choice(hashtag_list))
     return search_list
 
